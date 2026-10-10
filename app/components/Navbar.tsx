@@ -22,15 +22,18 @@ export default function Navbar(){
     const pathname = usePathname();
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
+    const isHome = pathname === '/';
+    const solidHeader = !isHome || scrolled || menuOpen;
 
     useEffect(() => {
+        if (!isHome) return;
         const onScroll = () => {
             setScrolled(window.scrollY > 10);
         }
         onScroll();
         window.addEventListener('scroll', onScroll, { passive: true });
         return () => window.removeEventListener('scroll', onScroll);
-    } , [])
+    } , [isHome])
 
     useEffect(() => {
         setMenuOpen(false);
@@ -46,7 +49,9 @@ export default function Navbar(){
     }, [menuOpen]);
 
     return (
-        <header className={`fixed top-0 left-0 w-full z-80 ${scrolled || menuOpen ? 'bg-white/80 backdrop-blur-sm transition-all duration-300 ease-in-out' : ''}`}>
+        <header className={`fixed top-0 left-0 w-full z-80 transition-all duration-300 ease-in-out ${
+            solidHeader ? 'bg-[#f9f1e6]/95 backdrop-blur-sm' : ''
+        }`}>
             <nav className="flex justify-between items-center px-4 py-3 sm:px-5 sm:py-5">
                 {/* Logo */}
                 <div className="flex items-center gap-2 sm:gap-4 min-w-0">
@@ -110,7 +115,7 @@ export default function Navbar(){
                     menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
                 }`}
             >
-                <ul className="flex flex-col gap-1 px-6 py-6 text-lg bg-red-200">
+                <ul className="flex flex-col gap-1 px-6 py-6 text-lg">
                     {navlinks.map((link) => {
                         const isActive = pathname === link.href;
                         return (
